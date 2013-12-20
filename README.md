@@ -13,6 +13,7 @@ Configuration of Kafka Sink
     agent_log.sinks.kafka.batchsize = 200
     agent_log.sinks.kafka.producer.type = async
     agent_log.sinks.kafka.serializer.class = kafka.serializer.StringEncoder
+    agent_log.sinks.kafka.metadata.broker.list = [kafka_producer_host_name:port]
 
 Install as flume plugin
 ------------
@@ -29,7 +30,8 @@ Install as flume plugin
 2. scala-reflect-2.10.1.jar
 3. scala-compiler-2.10.1.jar
 4. scala-library-2.8.0.jar
-
+5. metrics-core-2.2.0.jar
+6. metrics-annotation-2.2.0.jar
 
 Special Thanks
 ---------
