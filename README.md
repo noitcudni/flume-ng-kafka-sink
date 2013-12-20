@@ -15,7 +15,7 @@ Configuration of Kafka Sink
     agent_log.sinks.kafka.serializer.class = kafka.serializer.StringEncoder
     agent_log.sinks.kafka.metadata.broker.list = [kafka_producer_host_name:port]
 
-Install as flume plugin
+Install as a flume plugin
 ------------
 * Compile this repo
 * Inside /usr/lib/flume
@@ -32,6 +32,15 @@ Install as flume plugin
  4. scala-library-2.8.0.jar
  5. metrics-core-2.2.0.jar
  6. metrics-annotation-2.2.0.jar
+
+Run it
+-------
+* Run flume
+ * flume-ng agent --conf /etc/flume/conf --conf-file /etc/flume/conf/flume-kafka-vagrant-sink.conf --name a1 -Dflume.root.logger=INFO,console
+
+* In another terminal
+ * telnet localhost 444444
+ * start typing away
 
 Special Thanks
 ---------
