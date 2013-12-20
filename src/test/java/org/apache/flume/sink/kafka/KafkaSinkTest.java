@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2013 Renjie Yao
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,8 @@ import static org.mockito.Mockito.*;
 import java.lang.reflect.Field;
 
 import kafka.javaapi.producer.Producer;
-import kafka.javaapi.producer.ProducerData;
+import kafka.producer.KeyedMessage;
+//import kafka.javaapi.producer.ProducerData;
 
 import org.apache.flume.Channel;
 import org.apache.flume.Event;
@@ -52,7 +53,7 @@ public class KafkaSinkTest {
 		mockEvent = mock(Event.class);
 		mockTx = mock(Transaction.class);
 		mockKafkaSink = new KafkaSink();
-		
+
 		Field field = AbstractSink.class.getDeclaredField("channel");
 		field.setAccessible(true);
 		field.set(mockKafkaSink, mockChannel);
@@ -64,7 +65,7 @@ public class KafkaSinkTest {
 		field = KafkaSink.class.getDeclaredField("producer");
 		field.setAccessible(true);
 		field.set(mockKafkaSink, mockProducer);
-		
+
 		when(mockChannel.take()).thenReturn(mockEvent);
 		when(mockChannel.getTransaction()).thenReturn(mockTx);
 	}
@@ -80,7 +81,7 @@ public class KafkaSinkTest {
 		Status status = mockKafkaSink.process();
 		verify(mockChannel, times(1)).getTransaction();
 		verify(mockChannel, times(1)).take();
-		verify(mockProducer, times(1)).send((ProducerData<String, String>) any());
+		verify(mockProducer, times(1)).send((KeyedMessage<String, String>) any());
 		verify(mockTx, times(1)).commit();
 		verify(mockTx, times(0)).rollback();
 		verify(mockTx, times(1)).close();
@@ -94,7 +95,7 @@ public class KafkaSinkTest {
 		Status status = mockKafkaSink.process();
 		verify(mockChannel, times(1)).getTransaction();
 		verify(mockChannel, times(1)).take();
-		verify(mockProducer, times(0)).send((ProducerData<String, String>) any());
+		verify(mockProducer, times(0)).send((KeyedMessage<String, String>) any());
 		verify(mockTx, times(0)).commit();
 		verify(mockTx, times(1)).rollback();
 		verify(mockTx, times(1)).close();

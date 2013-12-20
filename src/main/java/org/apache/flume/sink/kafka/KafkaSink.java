@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2013 Renjie Yao
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,8 @@
 package org.apache.flume.sink.kafka;
 
 import kafka.javaapi.producer.Producer;
-import kafka.javaapi.producer.ProducerData;
+import kafka.producer.KeyedMessage;
+//import kafka.javaapi.producer.ProducerData;
 
 import org.apache.flume.Channel;
 import org.apache.flume.Context;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * A Sink of Kafka which get events from channels and publish to Kafka. I use this in our 
+ * A Sink of Kafka which get events from channels and publish to Kafka. I use this in our
  * company production environment which can hit 100k messages per second.
  * <tt>zk.connect: </tt> the zookeeper ip kafka use.<p>
  * <tt>topic: </tt> the topic to read from kafka.<p>
@@ -43,7 +44,7 @@ public class KafkaSink extends AbstractSink implements Configurable{
 	private static final Logger log = LoggerFactory.getLogger(KafkaSink.class);
 	private String topic;
 	private Producer<String, String> producer;
-	
+
 	public Status process() throws EventDeliveryException {
 		Channel channel = getChannel();
 		Transaction tx = channel.getTransaction();
@@ -54,7 +55,7 @@ public class KafkaSink extends AbstractSink implements Configurable{
 				tx.rollback();
 				return Status.BACKOFF;
 			}
-			producer.send(new ProducerData<String, String>(topic, new String(e.getBody())));
+			producer.send(new KeyedMessage<String, String>(topic, new String(e.getBody())));
 			log.trace("Message: {}", e.getBody());
 			tx.commit();
 			return Status.READY;
