@@ -19,19 +19,19 @@ Install as flume plugin
 ------------
 * Compile this repo
 * Inside /usr/lib/flume
-1. mkdir plugin.d
-2. mkdir plugin.d/flume-ng-kafka-sink
-3. mkdir plugin.d/flume-ng-kafka-sink/lib # The flume plugin goes here
-4. mkdir plugin.d/flume-ng-kafka-sink/libext # All dependency jars go here.
+ 1. mkdir plugin.d
+ 2. mkdir plugin.d/flume-ng-kafka-sink
+ 3. mkdir plugin.d/flume-ng-kafka-sink/lib # The flume plugin goes here
+ 4. mkdir plugin.d/flume-ng-kafka-sink/libext # All dependency jars go here.
 
 * copy the jar file from target to /usr/lib/flume/plugin.d/flume-ng-kafka-sink/lib/,
 * copy the following jars to /usr/lib/flume/plugin.d/flume-ng-kafka-sink/libext/
-1. kafka-0.8-SNAPSHOT.jar
-2. scala-reflect-2.10.1.jar
-3. scala-compiler-2.10.1.jar
-4. scala-library-2.8.0.jar
-5. metrics-core-2.2.0.jar
-6. metrics-annotation-2.2.0.jar
+ 1. kafka-0.8-SNAPSHOT.jar
+ 2. scala-reflect-2.10.1.jar
+ 3. scala-compiler-2.10.1.jar
+ 4. scala-library-2.8.0.jar
+ 5. metrics-core-2.2.0.jar
+ 6. metrics-annotation-2.2.0.jar
 
 Special Thanks
 ---------
