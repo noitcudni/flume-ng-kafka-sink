@@ -41,49 +41,49 @@ import org.slf4j.LoggerFactory;
  * <tt>serializer.class: </tt>{@kafka.serializer.StringEncoder}
  */
 public class KafkaSink extends AbstractSink implements Configurable{
-	private static final Logger log = LoggerFactory.getLogger(KafkaSink.class);
-	private String topic;
-	private Producer<String, String> producer;
+  private static final Logger log = LoggerFactory.getLogger(KafkaSink.class);
+  private String topic;
+  private Producer<String, String> producer;
 
-	public Status process() throws EventDeliveryException {
-		Channel channel = getChannel();
-		Transaction tx = channel.getTransaction();
-		try {
-			tx.begin();
-			Event e = channel.take();
-			if(e == null) {
-				tx.rollback();
-				return Status.BACKOFF;
-			}
-			producer.send(new KeyedMessage<String, String>(topic, new String(e.getBody())));
-			log.trace("Message: {}", e.getBody());
-			tx.commit();
-			return Status.READY;
-		} catch(Exception e) {
-			log.error("KafkaSink Exception:{}",e);
-			tx.rollback();
-			return Status.BACKOFF;
-		} finally {
-			tx.close();
-		}
-	}
+  public Status process() throws EventDeliveryException {
+    Channel channel = getChannel();
+    Transaction tx = channel.getTransaction();
+    try {
+      tx.begin();
+      Event e = channel.take();
+      if(e == null) {
+        tx.rollback();
+        return Status.BACKOFF;
+      }
+      producer.send(new KeyedMessage<String, String>(topic, new String(e.getBody())));
+      log.trace("Message: {}", e.getBody());
+      tx.commit();
+      return Status.READY;
+    } catch(Exception e) {
+      log.error("KafkaSink Exception:{}",e);
+      tx.rollback();
+      return Status.BACKOFF;
+    } finally {
+      tx.close();
+    }
+  }
 
-	public void configure(Context context) {
-		topic = context.getString("topic");
-		if(topic == null) {
-			throw new ConfigurationException("Kafka topic must be specified.");
-		}
-		producer = KafkaSinkUtil.getProducer(context);
-	}
+  public void configure(Context context) {
+    topic = context.getString("topic");
+    if(topic == null) {
+      throw new ConfigurationException("Kafka topic must be specified.");
+    }
+    producer = KafkaSinkUtil.getProducer(context);
+  }
 
-	@Override
-	public synchronized void start() {
-		super.start();
-	}
+  @Override
+  public synchronized void start() {
+    super.start();
+  }
 
-	@Override
-	public synchronized void stop() {
-		producer.close();
-		super.stop();
-	}
+  @Override
+  public synchronized void stop() {
+    producer.close();
+    super.stop();
+  }
 }
