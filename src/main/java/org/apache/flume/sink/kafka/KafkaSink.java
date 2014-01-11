@@ -103,7 +103,7 @@ public class KafkaSink extends AbstractSink implements Configurable{
 
     String producerType = context.getString(PRODUCER_TYPE_CONF);
     if (producerType.equals("sync")) {
-      syncBatchSize = Integer.parseInt(SYNC_BATCH_SIZE_CONF, DEFAULT_SYNC_BATCH_SIZE);
+      syncBatchSize = (context.getInteger(SYNC_BATCH_SIZE_CONF, DEFAULT_SYNC_BATCH_SIZE)).intValue();
       sendViaSync = true;
     } else if (producerType.equals("async")) {
       sendViaSync = false;
