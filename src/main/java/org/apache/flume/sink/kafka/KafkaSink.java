@@ -15,6 +15,8 @@
  ******************************************************************************/
 package org.apache.flume.sink.kafka;
 
+import java.util.ArrayList;
+
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 //import kafka.javaapi.producer.ProducerData;
@@ -41,22 +43,50 @@ import org.slf4j.LoggerFactory;
  * <tt>serializer.class: </tt>{@kafka.serializer.StringEncoder}
  */
 public class KafkaSink extends AbstractSink implements Configurable{
+  private static final String PRODUCER_TYPE_CONF = "producer.type";
+  private static final String SYNC_BATCH_SIZE_CONF = "syncbatchsize"; //only being used if producer == sync
+  private static final int DEFAULT_SYNC_BATCH_SIZE = 1;
+
   private static final Logger log = LoggerFactory.getLogger(KafkaSink.class);
   private String topic;
   private Producer<String, String> producer;
+  private int syncBatchSize;
+  private boolean sendViaSync;
 
   public Status process() throws EventDeliveryException {
     Channel channel = getChannel();
     Transaction tx = channel.getTransaction();
     try {
       tx.begin();
-      Event e = channel.take();
-      if(e == null) {
-        tx.rollback();
-        return Status.BACKOFF;
+
+      if (sendViaSync) {
+        // sync manual batching
+        ArrayList<KeyedMessage<String, String> > arryLst = new ArrayList<KeyedMessage<String, String> >(this.syncBatchSize);
+        Event e;
+        for (int i = 0; i < this.syncBatchSize; i++) {
+          e = channel.take();
+          if (e == null) {
+            break;
+          }
+          arryLst.add(new KeyedMessage<String, String>(topic, new String(e.getBody())));
+        }
+        if (arryLst.size() > 0) {
+          producer.send(arryLst);
+        } else {
+          tx.rollback();
+          return Status.BACKOFF;
+        }
+      } else {
+        // async
+        Event e = channel.take();
+        if(e == null) {
+          tx.rollback();
+          return Status.BACKOFF;
+        }
+        producer.send(new KeyedMessage<String, String>(topic, new String(e.getBody())));
+        log.trace("Message: {}", e.getBody());
       }
-      producer.send(new KeyedMessage<String, String>(topic, new String(e.getBody())));
-      log.trace("Message: {}", e.getBody());
+
       tx.commit();
       return Status.READY;
     } catch(Exception e) {
@@ -70,6 +100,17 @@ public class KafkaSink extends AbstractSink implements Configurable{
 
   public void configure(Context context) {
     topic = context.getString("topic");
+
+    String producerType = context.getString(PRODUCER_TYPE_CONF);
+    if (producerType.equals("sync")) {
+      syncBatchSize = Integer.parseInt(SYNC_BATCH_SIZE_CONF, DEFAULT_SYNC_BATCH_SIZE);
+      sendViaSync = true;
+    } else if (producerType.equals("async")) {
+      sendViaSync = false;
+    } else {
+      throw new ConfigurationException("Kafka's producer type can only be either sync or async");
+    }
+
     if(topic == null) {
       throw new ConfigurationException("Kafka topic must be specified.");
     }

@@ -8,12 +8,19 @@ Configuration of Kafka Sink
 
     agent_log.sinks.kafka.type = org.apache.flume.sink.kafka.KafkaSink
     agent_log.sinks.kafka.channel = all_channel
-    agent_log.sinks.kafka.zk.connect = 127.0.0.1:2181
     agent_log.sinks.kafka.topic = all
-    agent_log.sinks.kafka.batchsize = 200
-    agent_log.sinks.kafka.producer.type = async
     agent_log.sinks.kafka.serializer.class = kafka.serializer.StringEncoder
     agent_log.sinks.kafka.metadata.broker.list = [kafka_producer_host_name:port]
+
+    # If producer.type == async
+    agent_log.sinks.kafka.batch.num.messages = 200 #optional
+    agent_log.sinks.kafka.producer.type = async
+
+    # If producer.type == sync
+    agent_log.sinks.kafka.synbatchsize = 200
+    agent_log.sinks.kafka.producer.type = sync
+    agent_log.sinks.kafka.request.required.acks = 1 #optional
+
 
 Install as a flume plugin
 ------------
@@ -44,8 +51,7 @@ Run it
 
 Special Thanks
 ---------
-
-In fact I'm a newbie in Java. I have learnt a lot from [flumg-ng-rabbitmq](https://github.com/jcustenborder/flume-ng-rabbitmq). Thanks to [Jeremy Custenborder](https://github.com/jcustenborder).
+[flumg-ng-rabbitmq](https://github.com/jcustenborder/flume-ng-rabbitmq). Thanks to [Jeremy Custenborder](https://github.com/jcustenborder).
 
 
 
