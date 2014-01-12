@@ -20,6 +20,15 @@
             <goals>
               <goal>shade</goal>
             </goals>
+            <configuration>
+              <artifactSet>
+                <excludes>
+                  <exclude>junit:junit</exclude>
+                  <exclude>org.apache.flume:*</exclude>
+                  <exclude>org.mockito:mockito-all</exclude>
+                </excludes>
+              </artifactSet>
+            </configuration>
           </execution>
         </executions>
         <configuration>
@@ -41,12 +50,10 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.flume</groupId>
       <artifactId>flume-ng-core</artifactId>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.kafka</groupId>
@@ -56,7 +63,6 @@
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
-      <scope>compile</scope>
     </dependency>
   </dependencies>
 
