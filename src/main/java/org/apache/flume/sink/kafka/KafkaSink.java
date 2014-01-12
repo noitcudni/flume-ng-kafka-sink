@@ -19,7 +19,6 @@ import java.util.ArrayList;
 
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
-//import kafka.javaapi.producer.ProducerData;
 
 import org.apache.flume.Channel;
 import org.apache.flume.Context;
