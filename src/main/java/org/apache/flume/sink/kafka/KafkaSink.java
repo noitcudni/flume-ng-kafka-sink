@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 public class KafkaSink extends AbstractSink implements Configurable{
   private static final String PRODUCER_TYPE_CONF = "producer.type";
   private static final String SYNC_BATCH_SIZE_CONF = "syncbatchsize"; //only being used if producer == sync
-  private static final int DEFAULT_SYNC_BATCH_SIZE = 1;
+  private static final int DEFAULT_SYNC_BATCH_SIZE = 50;
 
   private static final Logger log = LoggerFactory.getLogger(KafkaSink.class);
   private String topic;
